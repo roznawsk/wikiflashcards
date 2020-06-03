@@ -1,0 +1,3 @@
+title=Flashcards
+author=BestTeam
+orientation=portrait

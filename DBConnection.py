@@ -1,7 +1,7 @@
 import pymongo
-import classes
 from bson.objectid import ObjectId
 from datetime import datetime
+from flashcards_test import classes
 
 
 class AuthenticationException(Exception):

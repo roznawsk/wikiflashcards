@@ -1,0 +1,206 @@
+<ReviewWindow>:
+    name: 'review'
+
+    grid: grid
+    set_name: set_name
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            id: set_name
+            pos_hint:{"x": 0.1, "top":0.95}
+            size_hint:0.8, 0.15
+            text: ""
+            font_size: (min(root.width, root.height)/10)**(0.8)
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Back"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.learningMethod()
+
+        Button:
+            pos_hint:{"x": 0.8, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "All sets"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.allSets()
+
+        ScrollView:
+
+            pos_hint:{"x": 0.1, "top":0.75}
+            size_hint: 0.8, 0.7
+
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                id: grid
+
+                pos: (0,0)
+                size_hint_y: None
+                thickness: 2
+                padding: 10, 10
+
+                row_default_height: 0.1 * root.height
+                row_force_default: True
+
+
+                cols: 1
+
+<TestWindow>:
+    name: "test"
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    question: question
+    answer: answer
+    result: result
+
+    FloatLayout:
+
+        Label:
+            id: question
+            text: ''
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.9}
+            size_hint: 0.4, 0.15
+
+        Label:
+            id: result
+            text: ''
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.62}
+            size_hint: 0.4, 0.15
+
+        Label:
+            text: "Answer: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.05, "top":0.72}
+            size_hint: 0.25, 0.1
+
+        TextInput:
+            id: answer
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: False
+            pos_hint: {"x": 0.30 , "top":0.72}
+            size_hint: 0.4, 0.1
+            on_text_validate: root.validate()
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Back"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.learningMethod()
+
+        Button:
+            pos_hint:{"x": 0.8, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "All sets"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.allSets()
+
+<QuizWindow>:
+    name: "quiz"
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    question: question
+    but1: but1
+    but2: but2
+    but3: but3
+    but4: but4
+
+    FloatLayout:
+
+        Label:
+            id: question
+            text: ''
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.9}
+            size_hint: 0.4, 0.15
+
+        Button:
+            id: but1
+            text: ''
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            pos_hint:{"x": 0.3, "top":0.76}
+            size_hint: 0.4, 0.12
+
+            on_release:
+                root.validate(self)
+
+        Button:
+            id: but2
+            text: ''
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            pos_hint:{"x": 0.3, "top":0.59}
+            size_hint: 0.4, 0.12
+
+            on_release:
+                root.validate(self)
+
+        Button:
+            id: but3
+            text: ''
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            pos_hint:{"x": 0.3, "top":0.42}
+            size_hint: 0.4, 0.12
+
+            on_release:
+                root.validate(self)
+
+        Button:
+            id: but4
+            text: ''
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            pos_hint:{"x": 0.3, "top":0.25}
+            size_hint: 0.4, 0.12
+
+            on_release:
+                root.validate(self)
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Back"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.learningMethod()
+
+        Button:
+            pos_hint:{"x": 0.8, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "All sets"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.allSets()
