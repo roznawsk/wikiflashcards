@@ -1,3 +1,0 @@
-p@p.com;1234;Przmeg;2020-03-29
-r@r.com;1234;roz;2020-03-29
-amadeusz002@wp.pl;1234;amadeusz;2020-05-17
