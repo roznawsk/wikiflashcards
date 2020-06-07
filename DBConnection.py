@@ -1,7 +1,7 @@
 import pymongo
 from bson.objectid import ObjectId
 from datetime import datetime
-from flashcards_test import classes
+import classes
 
 
 class AuthenticationException(Exception):
@@ -57,7 +57,7 @@ class DBConnection:
         result_cards = []
         if self.db["cardssets"].count_documents({"_id": ObjectId(set_id)}) == 0:
             return -1
-            #raise DatabaseException("No such set")
+            # raise DatabaseException("No such set")
         cards_set = self.db["cardssets"].find({"_id": ObjectId(set_id)})
         for card_id in cards_set["cards"]:
             card = self.db["flashcards"].findOne({"_id": ObjectId(card_id)})
@@ -67,43 +67,57 @@ class DBConnection:
     def add_user(self, user_name, user_email, user_password):
         if len(user_password) < 8:
             return -1
-            #raise AddValueException("Too short password")
-        already_exists = self.db["users"].count_documents({"UserName": user_name})
+            # raise AddValueException("Too short password")
+        already_exists = self.db["users"].count_documents({"email": user_email})
         if already_exists > 0:
             return -2
-            #raise (DatabaseException("User already exists"))
+            # raise (DatabaseException("User already exists"))
         users = self.db["users"]
         users.insert_one({"UserName": user_name, "password": user_password, "email": user_email, "cardsCreated": 0})
+        return 1
 
     def user_auth(self, email, given_password):
         user = self.get_user(email)
         if user == 0:
             return -1
-            #raise AuthenticationException("No such user")
+            # raise AuthenticationException("No such user")
         result = self.db["users"].count_documents({'email': email, 'password': given_password})
         if result == 0:
             return -2
-            #raise AuthenticationException("Password incorrect")
+            # raise AuthenticationException("Password incorrect")
         return 1
 
     def add_flashcard(self, question, answer, creator_id, set_id):
         flashcards = self.db["flashcards"]
         if self.db["users"].count_documents({"_id": ObjectId(creator_id)}) == 0:
-            #raise DatabaseException("No such user")
+            # raise DatabaseException("No such user")
             return -1
         query = {"Question": question, "Answer": answer, "User": creator_id, "Set": set_id}
         if self.db["flashcards"].count_documents(query) != 0:
-            #raise DatabaseException("You have already created such flashcard")
+            # raise DatabaseException("You have already created such flashcard")
             return -2
         flash_card_id = flashcards.insert_one(
             {"Question": question, "Answer": answer, "User": creator_id, "Set": set_id}).inserted_id
         self.db["cardssets"].update_one({"_id": ObjectId(set_id)}, {"$addToSet": {"cards": flash_card_id}})
         return 1
 
+    def add_rating(self, mark, description, creator_id, set_id):
+        rate = self.db["rating"]
+        query = {"Creator_ID": creator_id, "Set_ID": set_id}
+        if self.db["rating"].count_documents(query) != 0:
+            return -1  # already rated
+        if not mark.isdigit():
+            return -2  # mark isn't an intiger
+        if int(mark) < 0 or int(mark) > 5:
+            return -2
+        rate.insert_one({"Creator_ID": creator_id, "Set_ID": set_id, "Mark": mark, "Description": description})
+        self.update_average_mark(set_id)
+        return 1
+
     def add_flashcard_mark(self, card_id, user_id, mark):
         if self.db["flashcards"].count_documents({"_id": ObjectId(card_id)}) == 0:
             return -1
-            #raise DatabaseException("No such card")
+            # raise DatabaseException("No such card")
         card = self.db["flashcards"].find_one({"_id": ObjectId(card_id)})
         already_exists = self.db["ratings"].count_documents({"User": user_id, "Card": card_id})
         if already_exists == 0:
@@ -113,17 +127,17 @@ class DBConnection:
         self.update_avarege_mark(card["_id"])
         return 1
 
-    def update_avarege_mark(self, card_id):
-        ratings = self.db["ratings"].find({"Card": card_id})
+    def update_average_mark(self, set_id):
+        ratings = self.db["rating"].find({"Set_ID": set_id})
         marks_sum = 0
         marks_amount = 0
         for rating in ratings:
-            marks_sum += rating["Mark"]
+            marks_sum += int(rating["Mark"])
             marks_amount += 1
-        self.db["flashcards"].update_one({"_id": card_id}, {"avg_mark": round(marks_sum / marks_amount, 2)})
+        self.db["cardssets"].update_one({"_id": set_id}, {"$set": {"avg_mark": round(marks_sum / marks_amount, 2)}})
 
-    def get_flashcard_average_mark(self, card_id):
-        return (self.db["flashcards"].find_one({"_id": card_id}))["avg_mark"]
+    def get_set_average_mark(self, set_id):
+        return (self.db["cardssets"].find_one({"_id": set_id}))["avg_mark"]
 
     # def upload_set(self, cards_set):
     #     if cards_set.self_id is None:
@@ -147,8 +161,6 @@ class DBConnection:
             # TODO
             pass
 
-
-
     def sets_list_for_selection(self, search_word):
         result_sets = {}
         for cards_set in self.db["cardssets"].find({"Description": {"$exists": "true"}}):
@@ -167,7 +179,7 @@ class DBConnection:
         return result_sets
 
     def all_sets(self):
-        result_sets={}
+        result_sets = {}
         for cards_set in self.db["cardssets"].find({"Description": {"$exists": "true"}}):
             cur_set = classes.Set(cards_set["Creator"], cards_set["Description"], cards_set["_id"])
             for cardID in cards_set["cards"]:
@@ -182,12 +194,9 @@ class DBConnection:
 
         return result_sets
 
-
-
     # TODO
     def has_already_rated(self, user_id, card_id):
         print("todotodotodotodotooooodq")
-
 
 # db = DBConnection()
 # print("Users list:")

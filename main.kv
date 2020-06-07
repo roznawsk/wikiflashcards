@@ -222,6 +222,14 @@
             on_release:
                 root.manager.transition.direction = "left"
                 root.quizBtn()
+        Button:
+            pos_hint:{"x":0.26,"y":0.06}
+            size_hint: 0.48, 0.14
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            text: "Rate Set"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.rateBtn()
 
 <P>:
     Label:
@@ -629,3 +637,69 @@
                         size: self.size
 
 
+<RateSets>:
+    name: 'rateSets'
+
+    score: score
+    desc: desc
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            text: 'Rate selected set!'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.mainMenu()
+
+
+        Label:
+            text:"Score: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.75}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: score
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: False
+            pos_hint: {"x": 0.45 , "top":0.73}
+            size_hint: 0.4, 0.06
+
+
+        Label:
+            text:"Description: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.55}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: desc
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: True
+            pos_hint: {"x": 0.45 , "top":0.53}
+            size_hint: 0.4, 0.12
+
+        Button:
+            pos_hint:{"x":0.2,"y":0.22}
+            size_hint: 0.6, 0.12
+            text: "Submit"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            on_release:
+                root.manager.transition.direction = "left"
+                root.rateSet()

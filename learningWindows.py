@@ -6,8 +6,9 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.togglebutton import ToggleButton
 
 # from flashcards_test.config import *
-from flashcards_test.config import sm
-from flashcards_test import config
+from config import sm
+
+import config
 
 
 class LearningWindow(Screen):
@@ -25,7 +26,7 @@ class LearningWindow(Screen):
     def allSets(self):
         global current_sets
         current_sets.clear()
-        current_sets = db_x.all_sets()
+        current_sets = config.db_x.all_sets()
         self.reset()
         sm.current = "availableSets"
 

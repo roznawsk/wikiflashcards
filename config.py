@@ -1,7 +1,7 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, WipeTransition
 
-from flashcards_test import DBConnection, classes
+import DBConnection, classes
 # from flashcards_test.main import *
 
 Builder.load_file("main.kv")

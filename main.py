@@ -8,9 +8,11 @@ from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.togglebutton import ToggleButton
 import csv
-from flashcards_test.config import *
-from flashcards_test.config import db_x
-from flashcards_test.learningWindows import *
+from config import *
+from config import db_x
+from learningWindows import *
+import classes
+import config
 
 
 class PopupCenter(Popup):
@@ -29,7 +31,6 @@ def show_popup(text, title=""):
 
 
 class CreateAccountWindow(Screen):
-
     font_size_large = NumericProperty(20)
 
     def submit(self):
@@ -38,16 +39,15 @@ class CreateAccountWindow(Screen):
             x = db_x.add_user(self.namee.text, self.email.text, self.password.text)
             if x == 1:
                 show_popup("Account created\nsuccessfully!")
-                # db_u.add_user(self.email.text, self.password.text, self.namee.text)
-                # db_x.add_user(self.namee.text, self.email.text, self.password.text)
+
                 self.reset()
                 sm.current = "login"
             elif x == -1:
-                show_popup("Error!")
+                show_popup("Too short password!")
                 self.reset_pass()
                 sm.current = "create"
             elif x == -2:
-                show_popup("Error!")
+                show_popup("User already exists")
                 self.reset()
                 sm.current = "create"
         else:
@@ -98,11 +98,11 @@ class LoginWindow(Screen):
             sm.current = "homeScreenWindow"
         elif x == -1:
             self.reset()
-            self.show_popup("No such user")
+            show_popup("No such user")
             sm.current = "login"
         else:
             self.reset()
-            self.show_popup("Wrong password")
+            show_popup("Wrong password")
             sm.current = "login"
 
     def createBtn(self):
@@ -135,6 +135,9 @@ class LearningMethodWindow(Screen):
 
     def mainMenu(self):
         sm.current = "homeScreenWindow"
+
+    def rateBtn(self):
+        sm.current = "rateSets"
 
 
 class CreateSet(Screen):
@@ -210,7 +213,7 @@ class AvailableSets(Screen):
 
     def on_enter(self, *args):
         for key, cardsSet in current_sets.items():
-            button = Button(text=cardsSet.description + "\nby "+str(cardsSet.Creator))
+            button = Button(text=cardsSet.description + "\nby " + str(cardsSet.Creator))
             button.size_hint = (0.8, 0.35)
             button.bind(on_press=self.pressed)
             self.sets[button] = cardsSet.ID
@@ -234,17 +237,39 @@ class AvailableSets(Screen):
             self.ids.grid.remove_widget(button)
 
 
+class RateSets(Screen):
+    desc = ObjectProperty(None)
+    score = ObjectProperty(None)
+
+    def reset(self):
+        self.desc.text = ""
+        self.score.text = ""
+
+    def mainMenu(self):
+        sm.current = "homeScreenWindow"
+
+    def rateSet(self):
+        x = db_x.add_rating(self.score.text, self.desc.text, db_x.get_id(mail), config.flashcard_set.ID)
+        if x == -1:
+            show_popup("You have already rated this set!")
+        if x == -2:
+            show_popup("Your mark has to be a number between 0 and 5")
+        if x == 1:
+            show_popup("You have successfully rated this set!")
+        self.reset()
+
+
 screens = [LoginWindow(name="login"), CreateAccountWindow(name="create"),
            ReviewWindow(name="review"),
            HomeScreenWindow(name="homeScreenWindow"), CreateFlashcard(name="createFlashcard"),
            CreateSet(name="createSet"), SearchSet(name="searchSet"),
            AvailableSets(name="availableSets"), LearningMethodWindow(name="learningMethod"),
-           TestWindow(name="test"), QuizWindow(name="quiz")]
+           TestWindow(name="test"), QuizWindow(name="quiz"), RateSets(name="rateSets")]
 
 for screen in screens:
     sm.add_widget(screen)
 
-sm.current = "homeScreenWindow"
+sm.current = "login"
 
 
 class MyMainApp(App):
