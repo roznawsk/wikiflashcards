@@ -1,0 +1,705 @@
+#:set bg_color (0.25, 0.68, 0.965, 1)
+
+<CreateAccountWindow>:
+    name: "create"
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    namee: namee
+    email: email
+    password: passw
+
+    FloatLayout:
+        cols:1
+
+        FloatLayout:
+            size: root.width, root.height/2
+
+            Label:
+                text: "Create an Account"
+                size_hint: 0.4, 0.15
+                pos_hint: {"x":0.3, "top":0.95}
+                font_size: (min(root.width, root.height)/10)**(0.8)
+
+            Label:
+                size_hint: 0.35, 0.1
+                pos_hint: {"x":0.1, "top":0.78}
+                text: "Name: "
+                font_size: (min(root.width, root.height)/14)**(0.8)
+
+            TextInput:
+                id: namee
+                size_hint: 0.4, 0.06
+                pos_hint: {"x":0.45, "top":0.76}
+                multiline: False
+                font_size: (min(root.width, root.height)/14)**(0.8)
+                on_text_validate: root.ids.email.focus = True
+
+            Label:
+                size_hint: 0.35, 0.1
+                pos_hint: {"x":0.1, "top":0.65}
+                text: "Email: "
+                font_size: (min(root.width, root.height)/14)**(0.8)
+
+            TextInput:
+                id: email
+                pos_hint: {"x":0.45, "top":0.63}
+                size_hint: 0.4, 0.06
+                multiline: False
+                font_size: (min(root.width, root.height)/14)**(0.8)
+                on_text_validate: root.ids.passw.focus = True
+
+            Label:
+                size_hint: 0.35, 0.1
+                pos_hint: {"x":0.1, "top":0.52}
+                text: "Password: "
+                font_size: (min(root.width, root.height)/14)**(0.8)
+
+            TextInput:
+                id: passw
+                pos_hint: {"x":0.45, "top":0.5}
+                size_hint: 0.4, 0.06
+                multiline: False
+                password: True
+                font_size: (min(root.width, root.height)/14)**(0.8)
+                on_text_validate: root.submit()
+
+        Button:
+            pos_hint:{"x":0.3,"y":0.1}
+            size_hint: 0.4, 0.1
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            text: "Already have an Account?\nLog In"
+            halign: "center"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.login()
+
+        Button:
+            pos_hint:{"x":0.2,"y":0.22}
+            size_hint: 0.6, 0.12
+            text: "Submit"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            on_release:
+                root.manager.transition.direction = "left"
+                root.submit()
+
+<LoginWindow>:
+    name: "login"
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    email: email
+    password: password
+
+    FloatLayout:
+
+        Label:
+            text: 'Login'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Label:
+            text:"Email: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.75}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: email
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: False
+            pos_hint: {"x": 0.45 , "top":0.73}
+            size_hint: 0.4, 0.06
+            on_text_validate: root.ids.password.focus = True
+
+        Label:
+            text:"Password: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.6}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: password
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            multiline: False
+            password: True
+            pos_hint: {"x": 0.45, "top":0.58}
+            size_hint: 0.4, 0.06
+            on_text_validate:
+                root.manager.transition.direction = "up"
+                root.loginBtn()
+
+        Button:
+            pos_hint:{"x":0.2,"y":0.22}
+            size_hint: 0.6, 0.12
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            text: "Login"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.loginBtn()
+
+        Button:
+            pos_hint:{"x":0.3,"y":0.1}
+            size_hint: 0.4, 0.1
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            text: "Don't have an Account?\nCreate One"
+            halign: "center"
+            on_release:
+                root.manager.transition.direction = "right"
+                root.createBtn()
+
+
+<LearningMethodWindow>:
+    name: 'learningMethod'
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            text: 'Select learning mode'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.mainMenu()
+
+        Button:
+            pos_hint:{"x": 0.8, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "All sets"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.allSets()
+
+        Button:
+            pos_hint:{"x":0.26,"y":0.6}
+            size_hint: 0.48, 0.14
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            text: "Review flashcards"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.reviewBtn()
+
+        Button:
+            pos_hint:{"x":0.26,"y":0.42}
+            size_hint: 0.48, 0.14
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            text: "Test"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.testBtn()
+
+        Button:
+            pos_hint:{"x":0.26,"y":0.24}
+            size_hint: 0.48, 0.14
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            text: "Quiz"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.quizBtn()
+        Button:
+            pos_hint:{"x":0.26,"y":0.06}
+            size_hint: 0.48, 0.14
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            text: "Rate Set"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.rateBtn()
+
+<P>:
+    Label:
+        text:"No such user"
+        size_hint:0.6,0.1
+        pos_hint: {"x": 0.2,"top":0.9}
+
+<P1>:
+    Label:
+        text:"Wrong password"
+        size_hint:0.6,0.1
+        pos_hint: {"x": 0.2,"top":0.9}
+
+<P2>
+    Label:
+        text:"You have created a flashcard!"
+        size_hint:0.6,0.1
+        pos_hint: {"x": 0.2,"top":0.5}
+
+<P3>
+    Label:
+        text:"You have add a flashcard!"
+        size_hint:0.6,0.1
+        pos_hint: {"x": 0.2,"top":0.5}
+
+
+<PopupCenter>
+    title: ""
+    title_align: "center"
+    label: label
+    separator_height: 0
+    separator_color: 0.4, 0.4, 0.4, 1
+    size_hint: 0.6,0.3
+
+    BoxLayout:
+        orientation: "vertical"
+
+        Label:
+            id: label
+            text: "Popup"
+            font_size: (min(root.width, root.height)/7)**(0.8)
+            size_hint: 0.6,0.1
+            pos_hint: {"x": 0.2,"top":0.9}
+            halign: "center"
+
+        Button:
+            text: "ok"
+            font_size: (min(root.width, root.height)/7)**(0.8)
+            size_hint: 0.2, 0.05
+            pos_hint: {"x": 0.4,"top":0.1}
+            halign: "center"
+            on_release:
+                root.dismiss()
+
+
+<HomeScreenWindow>:
+    name: 'homeScreenWindow'
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            pos_hint:{"x": 0.1, "top":0.95}
+            size_hint:0.8, 0.15
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            #color: (255, 255, 255, 1)
+
+        Button:
+            pos_hint:{"x": 0.8, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Log out"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.log_out()
+
+        Button:
+            pos_hint:{"x": 0.3, "top":0.7}
+            size_hint:0.4, 0.2
+            text: "Create Set"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.create_set()
+
+        Button:
+            pos_hint:{"x": 0.3, "top":0.3}
+            size_hint:0.4, 0.2
+            text: "All sets"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.all_sets()
+
+
+        Button:
+            pos_hint:{"x": 0.3, "top":0.5}
+            size_hint:0.4, 0.2
+            text: "Find set"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.searchSet()
+
+
+<CreateFlashcard>:
+    name: 'createFlashcard'
+
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    front: front
+    back: back
+
+    FloatLayout:
+
+        Label:
+            text: 'Add flashcards to your set!'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Label:
+            text:"Front page: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.75}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: front
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: False
+            pos_hint: {"x": 0.45 , "top":0.75}
+            size_hint: 0.4, 0.1
+
+        Label:
+            text:"Back page: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.6}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: back
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: False
+            pos_hint: {"x": 0.45, "top":0.6}
+            size_hint: 0.4, 0.1
+
+        Button:
+            pos_hint:{"x":0.35,"y":0.1}
+            size_hint: 0.3, 0.2
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            text: "Create"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.addFlashcard()
+        Button:
+            pos_hint:{"x": 0.0, "top":0.125}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.mainMenu()
+        Button:
+            pos_hint:{"x": 0.8, "top":0.125}
+            size_hint:0.2, 0.1
+            text: "Upload Set"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.uploadSet()
+
+<CreateSet>:
+    name: 'createSet'
+
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    description: description
+
+    FloatLayout:
+
+        Label:
+            text: 'Create your own Set of flashcards!'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Label:
+            text:"Description: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.75}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: description
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: True
+            pos_hint: {"x": 0.45 , "top":0.75}
+            size_hint: 0.4, 0.1
+
+
+        Button:
+            pos_hint:{"x":0.35,"y":0.1}
+            size_hint: 0.3, 0.2
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            text: "Create"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.createSet()
+        Button:
+            pos_hint:{"x": 0.0, "top":0.125}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.mainMenu()
+
+<SearchSet>:
+    name: 'searchSet'
+
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    keyword: keyword
+
+    FloatLayout:
+
+        Label:
+            text: 'Find your set!'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Label:
+            text:"Key word"
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.75}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: keyword
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: True
+            pos_hint: {"x": 0.45 , "top":0.75}
+            size_hint: 0.4, 0.1
+
+
+        Button:
+            pos_hint:{"x":0.35,"y":0.1}
+            size_hint: 0.3, 0.2
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            text: "Find"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.searchSet()
+        Button:
+            pos_hint:{"x": 0.0, "top":0.125}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.mainMenu()
+
+<AvailableSets11111>
+    name: 'availableSets11111'
+
+    grid: grid
+    set_name: set_name
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            id: set_name
+            pos_hint:{"x": 0.1, "top":0.95}
+            size_hint:0.8, 0.15
+            text: "Available sets"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.125}
+            size_hint:0.2, 0.1
+            text: "Menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.mainMenu()
+
+        ScrollView:
+
+            pos_hint:{"x": 0.1, "top":0.75}
+            size_hint: 0.8, 0.7
+
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                id: grid
+
+                pos: (0,0)
+                size_hint_y: None
+                thickness: 2
+                padding: 10, 10
+
+                row_default_height: 0.1 * root.height
+                row_force_default: True
+
+
+                cols: 2
+
+
+<AvailableSets>:
+    name: 'availableSets'
+
+    grid: grid
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            pos_hint:{"x": 0.1, "top":0.95}
+            size_hint:0.8, 0.15
+            text: "Available sets"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+
+        Button:
+            pos_hint:{"x": 0.8, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Log out"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.log_out()
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "up"
+                root.mainMenu()
+
+        ScrollView:
+
+            pos_hint:{"x": 0.1, "top":0.75}
+            size_hint: 0.8, 0.7
+
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                id: grid
+                pos: (0,0)
+                size_hint_y: None
+
+                row_default_height: 0.1 * root.height
+                row_force_default: True
+
+                cols: 1
+
+                canvas:
+                    Color:
+                        rgba: 0.4647, 0.737, 0.8235, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+
+<RateSets>:
+    name: 'rateSets'
+
+    score: score
+    desc: desc
+
+    canvas:
+        Color:
+            rgba: bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+
+        Label:
+            text: 'Rate selected set!'
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            pos_hint: {"x":0.3, "top":0.95}
+            size_hint: 0.4, 0.15
+
+        Button:
+            pos_hint:{"x": 0.0, "top":0.975}
+            size_hint:0.2, 0.1
+            text: "Main menu"
+            font_size: (min(root.width, root.height)/18)**(0.8)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.mainMenu()
+
+
+        Label:
+            text:"Score: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.75}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: score
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: False
+            pos_hint: {"x": 0.45 , "top":0.73}
+            size_hint: 0.4, 0.06
+
+
+        Label:
+            text:"Description: "
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            pos_hint: {"x":0.1, "top":0.55}
+            size_hint: 0.35, 0.1
+
+        TextInput:
+            id: desc
+            font_size: (min(root.width, root.height)/14)**(0.8)
+            multiline: True
+            pos_hint: {"x": 0.45 , "top":0.53}
+            size_hint: 0.4, 0.12
+
+        Button:
+            pos_hint:{"x":0.2,"y":0.22}
+            size_hint: 0.6, 0.12
+            text: "Submit"
+            font_size: (min(root.width, root.height)/10)**(0.8)
+            on_release:
+                root.manager.transition.direction = "left"
+                root.rateSet()

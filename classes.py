@@ -26,7 +26,4 @@ class Set:
         self.description = description
 
     def addFlashcard(self, Flashcard):
-        # if self.Flashcards[0] == 0:
-        #     self.Flashcards[0] = Flashcard
-        # else:
-            self.Flashcards.append(Flashcard)
+        self.Flashcards.append(Flashcard)

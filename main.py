@@ -1,64 +1,36 @@
 from bson import ObjectId
 from kivy.app import App
-from kivy.graphics.context_instructions import Color
-from kivy.graphics.vertex_instructions import Rectangle
-from kivy.lang import Builder
-from kivy.uix.behaviors import FocusBehavior
-from kivy.uix.boxlayout import BoxLayout
+from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.recycleboxlayout import RecycleBoxLayout
-from kivy.uix.recycleview import RecycleView
-from kivy.uix.recycleview.layout import LayoutSelectionBehavior
-from kivy.uix.recycleview.views import RecycleDataViewBehavior
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty, NumericProperty, BooleanProperty
 from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-#from yyy import UserDataBase, FlashCardDatabase
-from bson.json_util import dumps
-import pymongo
-import DBConnection
+from kivy.properties import ObjectProperty, NumericProperty
+from kivy.uix.screenmanager import Screen
+from kivy.uix.togglebutton import ToggleButton
+import csv
+from config import *
+from config import db_x
+from learningWindows import *
 import classes
+import config
 
-kv = Builder.load_file("my.kv")
 
-
-class WindowManager(ScreenManager):
+class PopupCenter(Popup):
     pass
 
 
-sm = WindowManager()
-
-
-mail = ""
-flashcard_set = classes.Set("1", "a")
-current_sets = {}
-
-db_x = DBConnection.DBConnection()
-
-
-class Pop(FloatLayout):
-    pass
-
-
-class Pop1(FloatLayout):
-    pass
-
-
-class Pop2(FloatLayout):
-    pass
-
-
-class Pop3(FloatLayout):
-    pass
+def show_popup(text, title=""):
+    popup = PopupCenter()
+    if title:
+        popup.separator_height = 0
+    else:
+        popup.separator_height = 2
+    popup.title = title
+    popup.ids.label.text = text
+    popup.open()
 
 
 class CreateAccountWindow(Screen):
-    namee = ObjectProperty(None)
-    email = ObjectProperty(None)
-    password = ObjectProperty(None)
-
     font_size_large = NumericProperty(20)
 
     def submit(self):
@@ -66,46 +38,25 @@ class CreateAccountWindow(Screen):
                 "@") == 1 and self.email.text.count(".") > 0:
             x = db_x.add_user(self.namee.text, self.email.text, self.password.text)
             if x == 1:
-                self.show_popup2()
-                # db_u.add_user(self.email.text, self.password.text, self.namee.text)
-                # db_x.add_user(self.namee.text, self.email.text, self.password.text)
+                show_popup("Account created\nsuccessfully!")
+
                 self.reset()
                 sm.current = "login"
             elif x == -1:
-                self.show_popup3()
+                show_popup("Too short password!")
                 self.reset_pass()
                 sm.current = "create"
             elif x == -2:
-                self.show_popup4()
+                show_popup("User already exists")
                 self.reset()
                 sm.current = "create"
         else:
             self.reset()
-            self.show_popup1()
+            show_popup("Password must contain at least 8 characters\nEmail must be valid", "Incorrect data!")
             sm.current = "create"
 
     def reset_pass(self):
         self.password.text = ""
-
-    def show_popup1(self):
-        show = Pop()
-        popupWindow = Popup(title="Error!", content=show, size_hint=(None, None), size=(200, 200))
-        popupWindow.open()
-
-    def show_popup2(self):
-        show = Pop1()
-        popupWindow = Popup(title="Account created!", content=show, size_hint=(None, None), size=(300, 200))
-        popupWindow.open()
-
-    def show_popup3(self):
-        show = Pop2()
-        popupWindow = Popup(title="Error!", content=show, size_hint=(None, None), size=(400, 200))
-        popupWindow.open()
-
-    def show_popup4(self):
-        show = Pop3()
-        popupWindow = Popup(title="Error!", content=show, size_hint=(None, None), size=(200, 200))
-        popupWindow.open()
 
     def login(self):
         self.reset()
@@ -132,13 +83,10 @@ class HomeScreenWindow(Screen):
         global current_sets
         current_sets.clear()
         current_sets = db_x.all_sets()
-        sm.current="availableSets"
-
+        sm.current = "availableSets"
 
 
 class LoginWindow(Screen):
-    email = ObjectProperty(None)
-    password = ObjectProperty(None)
 
     def loginBtn(self):
         # if db_u.validate(self.email.text, self.password.text):
@@ -146,27 +94,16 @@ class LoginWindow(Screen):
         if x == 1:
             global mail
             mail = self.email.text
-            #HomeWindow.current = self.email.text
             self.reset()
             sm.current = "homeScreenWindow"
         elif x == -1:
             self.reset()
-            self.show_popup1()
+            show_popup("No such user")
             sm.current = "login"
         else:
             self.reset()
-            self.show_popup2()
+            show_popup("Wrong password")
             sm.current = "login"
-
-    def show_popup1(self):
-        show = P()
-        popupWindow = Popup(title="Login error", content=show, size_hint=(None, None), size=(200, 200))
-        popupWindow.open()
-
-    def show_popup2(self):
-        show = P1()
-        popupWindow = Popup(title="Login error", content=show, size_hint=(None, None), size=(200, 200))
-        popupWindow.open()
 
     def createBtn(self):
         self.reset()
@@ -180,66 +117,27 @@ class LoginWindow(Screen):
         sm.current = "login"
 
 
-
-class MyLabel(Label):
-    def on_size(self, *args):
-        self.canvas.before.clear()
-        with self.canvas.before:
-            Color(0, 1, 0, 0.25)
-            Rectangle(pos=(self.pos[0] + self.size[0] * 0.1, self.pos[1] + self.size[1] * 0.1),
-                      size=(self.size[0] * 0.8, self.size[1] * 0.8))
-
-
-class LearningWindow(Screen):
-
+class LearningMethodWindow(Screen):
     def __init__(self, **kwargs):
-        super(LearningWindow, self).__init__(**kwargs)
-        self.grid.bind(minimum_height=self.grid.setter('height'))
-        self.filename = ""
-        self.card_labels = []
+        super(LearningMethodWindow, self).__init__(**kwargs)
 
-    # def set_file(self, filename):
-    #     self.filename = filename
+    def reviewBtn(self):
+        sm.current = "review"
 
-    def browse_sets(self):
-        self.reset()
-        sm.current = "searchSet"
+    def testBtn(self):
+        sm.current = "test"
 
-    def on_enter(self, *args):
-        #filename = self.ids.set_name.text
-        #self.flashcards = db_f.retrieve_set(filename)
-        for card in flashcard_set.Flashcards:
-            label_term = MyLabel(text=card.Question, halign='center', valign='middle')
-            # with label_term.canvas:
-            #     Color(0, 1, 0, 0.25)
-            #     Rectangle(pos=label_term.pos, size=label_term.size)
-            label_def = MyLabel(text=card.Answer, halign='center', valign='middle')
-            # with label_term.canvas:
-            #     Color(0, 1, 0, 0.25)
-            #     Rectangle(pos=label_term.pos, size=label_term.size)
-            self.card_labels.append(label_term)
-            self.card_labels.append(label_def)
-            self.ids.grid.add_widget(label_term)
-            self.ids.grid.add_widget(label_def)
-
-    def reset(self, *args):
-        for label in self.card_labels:
-            self.ids.grid.remove_widget(label)
+    def quizBtn(self):
+        if len(config.flashcard_set.Flashcards) >= 4:
+            sm.current = "quiz"
+        else:
+            show_popup("Too few flashcards in set!")
 
     def mainMenu(self):
-        sm.current="homeScreenWindow"
-        self.reset()
+        sm.current = "homeScreenWindow"
 
-    def allSets(self):
-        global current_sets
-        current_sets.clear()
-        current_sets = db_x.all_sets()
-        self.reset()
-        sm.current = "availableSets"
-
-    # def pressed(self, instance):
-    #     filename = instance.text.split(':')[0]
-    #     instance.text = 'Opening ' + filename + '.txt'
+    def rateBtn(self):
+        sm.current = "rateSets"
 
 
 class CreateSet(Screen):
@@ -266,8 +164,6 @@ class CreateSet(Screen):
 
 
 class CreateFlashcard(Screen):
-    front = ObjectProperty(None)
-    back = ObjectProperty(None)
 
     def log_out(self):
         sm.current = "login"
@@ -279,22 +175,10 @@ class CreateFlashcard(Screen):
         self.front.text = ""
         self.back.text = ""
 
-    def show_popup1(self):
-        show = P2()
-        popupWindow = Popup(title="Create flashcard", content=show, size_hint=(None, None), size=(300, 200))
-        popupWindow.open()
-
-
-    def show_popup2(self):
-        show = P3()
-        popupWindow = Popup(title="Create flashcard", content=show, size_hint=(None, None), size=(300, 200))
-        popupWindow.open()
-
     def addFlashcard(self):
         flashcard = classes.Flashcard(self.front.text, self.back.text, db_x.get_id(mail), flashcard_set.ID)
         flashcard_set.addFlashcard(flashcard)
-        # print(flashcard_set.Flashcards)
-        self.show_popup2()
+        show_popup("You have created a flashcard!")
         self.reset()
 
     def uploadSet(self):
@@ -321,40 +205,27 @@ class SearchSet(Screen):
         self.keyword.text = ""
 
 
-# class AvailableSets(RecycleView):
-#     # def mainMenu(self):
-#     #     sm.current="homeScreenWindow"
-#     def __init__(self, **kwargs):
-#         super(AvailableSets, self).__init__(**kwargs)
-#         print("im here!!!")
-#         self.data = [{'text': cardsset.description} for cardsset in current_sets]
-#         # for cardset in current_sets:
-#         #     print(cardset.description)
-#         # # self.data = [{'text': str(x)} for x in range(10)]
-#         # self.data = [{'text': cardsset.description} for cardsset in current_sets]
-
-
 class AvailableSets(Screen):
     def __init__(self, **kwargs):
         super(AvailableSets, self).__init__(**kwargs)
         self.grid.bind(minimum_height=self.grid.setter('height'))
-        self.sets = []
+        self.sets = dict()
 
     def on_enter(self, *args):
-        for (key, cardsSet) in current_sets.items():
-            button = Button(text=cardsSet.description + " : ID:"+str(cardsSet.ID))
+        for key, cardsSet in current_sets.items():
+            button = Button(text=cardsSet.description + "\nby " + str(cardsSet.Creator))
             button.size_hint = (0.8, 0.35)
             button.bind(on_press=self.pressed)
-            self.sets.append(button)
+            self.sets[button] = cardsSet.ID
             self.ids.grid.add_widget(button)
 
     def pressed(self, instance):
-        setID = instance.text.split(':')[2]
-        global flashcard_set
-        del flashcard_set
-        flashcard_set = current_sets[ObjectId(setID)]
+        setID = self.sets[instance]
+        # global flashcard_set
+        # del flashcard_set
+        config.flashcard_set = current_sets[ObjectId(setID)]
         current_sets.clear()
-        sm.current = "learning"
+        sm.current = "learningMethod"
         self.reset()
 
     def mainMenu(self):
@@ -362,36 +233,38 @@ class AvailableSets(Screen):
         self.reset()
 
     def reset(self):
-        for button in self.sets:
+        for button in self.sets.keys():
             self.ids.grid.remove_widget(button)
 
 
+class RateSets(Screen):
+    desc = ObjectProperty(None)
+    score = ObjectProperty(None)
 
+    def reset(self):
+        self.desc.text = ""
+        self.score.text = ""
 
+    def mainMenu(self):
+        sm.current = "homeScreenWindow"
 
-
-
-class P2(FloatLayout):
-    pass
-
-
-class P(FloatLayout):
-    pass
-
-
-class P1(FloatLayout):
-    pass
-
-
-class P3(FloatLayout):
-    pass
+    def rateSet(self):
+        x = db_x.add_rating(self.score.text, self.desc.text, db_x.get_id(mail), config.flashcard_set.ID)
+        if x == -1:
+            show_popup("You have already rated this set!")
+        if x == -2:
+            show_popup("Your mark has to be a number between 0 and 5")
+        if x == 1:
+            show_popup("You have successfully rated this set!")
+        self.reset()
 
 
 screens = [LoginWindow(name="login"), CreateAccountWindow(name="create"),
-           #HomeWindow(name="home"),
-          LearningWindow(name="learning"), #MySetsWindow(name="my_sets")
-    HomeScreenWindow(name="homeScreenWindow"), CreateFlashcard(name="createFlashcard"), CreateSet(name="createSet"),
-           SearchSet(name="searchSet"), AvailableSets(name="availableSets")]
+           ReviewWindow(name="review"),
+           HomeScreenWindow(name="homeScreenWindow"), CreateFlashcard(name="createFlashcard"),
+           CreateSet(name="createSet"), SearchSet(name="searchSet"),
+           AvailableSets(name="availableSets"), LearningMethodWindow(name="learningMethod"),
+           TestWindow(name="test"), QuizWindow(name="quiz"), RateSets(name="rateSets")]
 
 for screen in screens:
     sm.add_widget(screen)
@@ -400,7 +273,6 @@ sm.current = "login"
 
 
 class MyMainApp(App):
-    font_size_large = NumericProperty(20)
 
     def build(self):
         return sm
