@@ -139,6 +139,9 @@ class LearningMethodWindow(Screen):
     def rateBtn(self):
         sm.current = "rateSets"
 
+    def ratingBtn(self):
+        sm.current = "rating"
+
 
 class CreateSet(Screen):
     description = ObjectProperty(None)
@@ -259,12 +262,43 @@ class RateSets(Screen):
         self.reset()
 
 
+class Rating(Screen):
+    def __init__(self, **kwargs):
+        super(Rating, self).__init__(**kwargs)
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.card_button_texts = dict()
+
+    def on_enter(self, *args):
+        ratings = db_x.get_all_ratings(config.flashcard_set.ID)
+        if ratings == -1:
+            sm.current = "learningMethod"
+            show_popup("There are no ratings")
+
+        else:
+            x = len(ratings)
+            for key in range(x):
+                texts = (ratings[key].mark, ratings[key].description)
+                button = Button(text=texts[0] + "\n" + str(texts[1]), halign='center',
+                                valign='middle')
+                button.size_hint = (0.2, 0.25)
+                self.card_button_texts[button] = texts
+                self.ids.grid.add_widget(button)
+
+    def mainMenu(self):
+        self.reset()
+        sm.current = "homeScreenWindow"
+
+    def reset(self):
+        for button in self.card_button_texts.keys():
+            self.ids.grid.remove_widget(button)
+
+
 screens = [LoginWindow(name="login"), CreateAccountWindow(name="create"),
            ReviewWindow(name="review"),
            HomeScreenWindow(name="homeScreenWindow"), CreateFlashcard(name="createFlashcard"),
            CreateSet(name="createSet"), SearchSet(name="searchSet"),
            AvailableSets(name="availableSets"), LearningMethodWindow(name="learningMethod"),
-           TestWindow(name="test"), QuizWindow(name="quiz"), RateSets(name="rateSets")]
+           TestWindow(name="test"), QuizWindow(name="quiz"), RateSets(name="rateSets"), Rating(name="rating")]
 
 for screen in screens:
     sm.add_widget(screen)
