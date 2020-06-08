@@ -15,6 +15,9 @@ import classes
 import config
 
 
+__version__ = '1.11.1'
+
+
 class PopupCenter(Popup):
     pass
 
