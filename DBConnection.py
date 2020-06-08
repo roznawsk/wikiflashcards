@@ -139,16 +139,17 @@ class DBConnection:
     def get_set_average_mark(self, set_id):
         return (self.db["cardssets"].find_one({"_id": set_id}))["avg_mark"]
 
-    # def upload_set(self, cards_set):
-    #     if cards_set.self_id is None:
-    #         setID = self.db["cardsset"].insert_one({"Description": cards_set.description,
-    #                                                 "Creator": cards_set.Creator,
-    #                                                 "AvgMark": 0}).inserted_id
-    #         for flashcard in cards_set.Flashcards:
-    #             self.add_flashcard(flashcard.Question, flashcard.Answer, flashcard.User, setID)
-    #     else:
-    #         #TODO
-    #         pass
+    def get_all_ratings(self, set_id):
+        ratings = []
+        if self.db['rating'].count_documents({"Set_ID": set_id}) == 0:
+            return -1
+        cursor = self.db["rating"].find({"Set_ID": set_id})
+        count=self.db["rating"].count_documents({"Set_ID":set_id})
+        for index in range(count):
+            ratings.append(classes.Rating(cursor[index]["Creator_ID"], cursor[index]["Set_ID"], cursor[index]["Mark"], cursor[index]["Description"]))
+
+        return ratings
+
 
     def upload_set(self, cards_set):
         if cards_set.ID is None:
@@ -193,10 +194,6 @@ class DBConnection:
             del cur_set
 
         return result_sets
-
-    # TODO
-    def has_already_rated(self, user_id, card_id):
-        print("todotodotodotodotooooodq")
 
 # db = DBConnection()
 # print("Users list:")

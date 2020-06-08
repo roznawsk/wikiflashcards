@@ -27,3 +27,11 @@ class Set:
 
     def addFlashcard(self, Flashcard):
         self.Flashcards.append(Flashcard)
+
+
+class Rating:
+    def __init__(self, creator_id, set_id, mark, description):
+        self.creator_ID = creator_id
+        self.set_ID = set_id
+        self.mark = mark
+        self.description = description
