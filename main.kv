@@ -728,11 +728,11 @@
         Button:
             pos_hint:{"x": 0.0, "top":0.975}
             size_hint:0.2, 0.1
-            text: "Main menu"
+            text: "Back"
             font_size: (min(root.width, root.height)/18)**(0.8)
             on_release:
                 root.manager.transition.direction = "up"
-                root.mainMenu()
+                root.back()
 
         ScrollView:
 

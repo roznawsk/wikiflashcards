@@ -287,9 +287,9 @@ class Rating(Screen):
                 self.card_button_texts[button] = texts
                 self.ids.grid.add_widget(button)
 
-    def mainMenu(self):
+    def back(self):
         self.reset()
-        sm.current = "homeScreenWindow"
+        sm.current = "learningMethod"
 
     def reset(self):
         for button in self.card_button_texts.keys():

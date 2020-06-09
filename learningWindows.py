@@ -1,5 +1,6 @@
 import random
 
+import editdistance
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.uix.togglebutton import ToggleButton
@@ -70,15 +71,15 @@ class TestWindow(LearningWindow):
     def validate(self):
         user_answer = self.ids.answer.text
         correct_answer = config.flashcard_set.Flashcards[self.current_question].Answer
-        # editdist =  editdistance.eval(user_answer, correct_answer)
-        if user_answer == correct_answer:
+        editdist = editdistance.eval(user_answer, correct_answer)
+        if editdist == 0:
             self.send_message('Correct!')
             self.question_ids.remove(self.current_question)
             Clock.schedule_once(lambda dt: self.next_question(), 0.8)
-        # elif editdist == 1:
-        #     self.ids.result.text = 'You had a typo, correct answer: \'{}\''.format(correct_answer)
-        #     self.question_ids.remove(self.current_question)
-        #     Clock.schedule_once(lambda dt: self.next_question(), 2)
+        elif editdist == 1:
+            self.ids.result.text = 'You had a typo, correct answer: \'{}\''.format(correct_answer)
+            self.question_ids.remove(self.current_question)
+            Clock.schedule_once(lambda dt: self.next_question(), 2)
         else:
             self.ids.result.text = 'Wrong! Correct answer: \'{}\''.format(correct_answer)
             Clock.schedule_once(lambda dt: self.next_question(), 2.5)
