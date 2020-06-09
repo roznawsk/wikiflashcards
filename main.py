@@ -7,7 +7,7 @@ from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.togglebutton import ToggleButton
-import csv
+# import csv
 from config import *
 from config import db_x
 from learningWindows import *
