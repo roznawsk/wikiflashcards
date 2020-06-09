@@ -1,4 +1,4 @@
-import pymongo
+from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
 import classes
@@ -30,7 +30,7 @@ class DatabaseException(Exception):
 
 class DBConnection:
     def __init__(self):
-        client = pymongo.MongoClient(
+        client = MongoClient(
             "mongodb+srv://Developer:TrustMe99@flipcardsdb-k8zdx.mongodb.net/test?retryWrites=true&w=majority")
         self.db = client["FlipcardsDB"]
 
